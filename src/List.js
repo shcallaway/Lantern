@@ -4,11 +4,13 @@ class List extends Component {
   render() {
     return (
       <div className="List">
-        <ul>
-          {this.props.tracks.map(track => {
-            return <li>{track}</li>
-          })}
-        </ul>
+        {this.props.tracks.map(track => {
+          return (
+            <div>
+              {track.title}
+            </div>
+          )
+        })}
       </div>
     );
   }
