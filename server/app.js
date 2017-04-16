@@ -1,7 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
-const chalk = require('chalk');
+const chalk = require('chalk')
 
 const database = require('./database')
 
@@ -16,16 +16,24 @@ app.use(express.static(path.resolve(__dirname, '..', 'build')))
 
 // Declare server-side routes
 app.get('/tracks', (req, res) => {
+
   process.stdout.write('Server received a request: ')
   console.log(chalk.blue(`${req.method} ${req.url}`))
 
+  // Query the database for all tracks
   database.query('SELECT * FROM Tracks', (error, results, fields) => {
+
+    // Upon failure...
     if (error) {
       process.stdout.write('Database query threw an error: ')
       console.log(chalk.red(error.code))
+
       res.sendStatus(500)
     }
-    res.status(200).json(results)
+
+    // Upon success...
+    const data = { tracks: results }
+    res.status(200).json(data)
   })
 })
 

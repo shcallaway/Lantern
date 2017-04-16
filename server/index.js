@@ -1,5 +1,5 @@
 'use strict';
-const chalk = require('chalk');
+const chalk = require('chalk')
 
 const app = require('./app')
 const database = require('./database')

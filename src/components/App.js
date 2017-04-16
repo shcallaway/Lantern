@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import List from './List';
+import React, { Component } from 'react'
+import List from './List'
 
 class App extends Component {
   constructor() {
@@ -18,7 +18,7 @@ class App extends Component {
       if (response.status === 200) {
         return response.json()
       } else {
-        throw new Error(response.statusText);
+        throw new Error(response.statusText)
       }
     })
     .then(tracks => this.setState(tracks))
@@ -34,4 +34,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default App
