@@ -7,7 +7,6 @@ import App from './App';
 const Routes = props => (
   <Router {...props}>
     <Route path="/" component={App} />
-    <Route path="/test" component={App} />
   </Router>
 );
 
