@@ -5,9 +5,6 @@ import AudioPlayer from '../utils/AudioPlayer';
 class List extends Component {
   constructor() {
     super()
-    this.state = {
-      
-    }
   }
 
   play(id) {
@@ -37,13 +34,15 @@ class List extends Component {
 
   render() {
     return (
-      <div className="List">
+      <div className='List'>
         {this.props.tracks.map((track, index) => {
           return <Track {...track} key={index} play={this.play} />
         })}
-        <button onClick={this.stop.bind(this)}>Stop</button>
-        <button onClick={this.pause.bind(this)}>Pause</button>
-        <button onClick={this.resume.bind(this)}>Resume</button>
+        <div className='Controls'>
+          <button onClick={this.stop.bind(this)}>Stop</button>
+          <button onClick={this.pause.bind(this)}>Pause</button>
+          <button onClick={this.resume.bind(this)}>Resume</button>
+        </div>
       </div>
     );
   }

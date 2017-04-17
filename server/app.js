@@ -4,6 +4,7 @@ const path = require('path')
 const chalk = require('chalk')
 const s3 = require('s3')
 const dotenv = require('dotenv')
+const sass = require('node-sass-middleware')
 
 dotenv.config()
 
@@ -22,6 +23,15 @@ const app = express()
 
 // Setup logging
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'))
+
+// Setup sass middleware
+app.use(sass({
+  // debug: true,
+  src:  path.resolve(__dirname, '../public/sass'),
+  dest: path.resolve(__dirname, '../public'),
+  indentedSyntax: true,
+  outputStyle: 'compressed'
+}));
 
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))

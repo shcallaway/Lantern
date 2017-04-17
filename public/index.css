@@ -1,0 +1,1 @@
+.Track{width:25%;color:#191919;padding:10px}.Track:hover{background-color:#FF785A}.List{width:80%;margin:0px 10% 0px 10%;display:flex;flex-wrap:wrap}@media screen and (max-width: 768px){.Track{width:50%}}@media screen and (max-width: 500px){.Track{width:100%}.List{width:100%;margin:0}}body{margin:0;font-family:sans-serif;background-color:#FFAA5A}.Controls{width:100%}
