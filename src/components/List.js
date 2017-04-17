@@ -3,6 +3,13 @@ import Track from './Track'
 import AudioPlayer from '../utils/AudioPlayer';
 
 class List extends Component {
+  constructor() {
+    super()
+    this.state = {
+      
+    }
+  }
+
   play(id) {
     const URL = `http://localhost:9000/tracks/${id}/stream`
     const options = { method: 'GET' }
@@ -20,6 +27,14 @@ class List extends Component {
     AudioPlayer.stop()
   }
 
+  pause() {
+    AudioPlayer.pause()
+  }
+
+  resume() {
+    AudioPlayer.resume()
+  }
+
   render() {
     return (
       <div className="List">
@@ -27,6 +42,8 @@ class List extends Component {
           return <Track {...track} key={index} play={this.play} />
         })}
         <button onClick={this.stop.bind(this)}>Stop</button>
+        <button onClick={this.pause.bind(this)}>Pause</button>
+        <button onClick={this.resume.bind(this)}>Resume</button>
       </div>
     );
   }
