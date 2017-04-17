@@ -1,7 +1,7 @@
 const context = new AudioContext()
 let source = null
-let offset = 0;
-let start = 0;
+let offset = 0
+let start = 0
 
 const AudioPlayer = {
   play: function(data) {

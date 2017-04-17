@@ -1,37 +1,50 @@
 $tablet: 768px
 $mobile: 500px
 $desktop: 1024px
-$padding: 100px
 
 $yellow: #FFF05A
 $gold: #FFD25A
 $orange: #FFAA5A
 $peach: #FF785A
 $brown: #191919
+$white: white
+
+$slow: 0.3s
+$fast: 0.1s
 
 .Track
-  width: 25%;
+  width: calc(25% - 20px) // account for padding
+  height: 100px
   color: $brown
+  font-weight: lighter
+  font-family: Helvetica
   padding: 10px
+  border-radius: 2px
+  transition: all $fast;
+  -webkit-transition: all $fast;
+  -moz-transition: all $fast;
   &:hover
-    background-color: $peach
+    cursor: pointer
+    background-color: $gold
 
-.List
+.Tracks
   width: 80%
-  margin: 0px 10% 0px 10%
+  margin: 100px 10% 0px 10%
   display: flex
   flex-wrap: wrap
 
 @media screen and (max-width: $tablet)
   .Track
-    width: 50%
+    width: calc(50% - 20px) // account for padding
 
 @media screen and (max-width: $mobile)
   .Track
-    width: 100%
-  .List
+    width: calc(100% - 20px) // account for padding
+    height: auto
+  .Tracks
     width: 100%
     margin: 0
+
 
 body
   margin: 0
@@ -39,4 +52,36 @@ body
   background-color: $orange
 
 .Controls
+  position: fixed;
+  bottom: 0;
   width: 100%
+  min-height: 100px
+  background-color: $peach
+  display: flex
+  justify-content: flex-start
+  align-items: center
+
+  p
+    margin-left: 20px
+
+  button
+    margin-left: 20px
+    color: $brown
+    font-weight: lighter
+    font-family: Helvetica
+    height: 50px
+    width: 50px
+    outline: none
+    background-color: $orange
+    border: none
+    border-radius: 50%
+    text-transform: uppercase
+    transition: all $slow;
+    -webkit-transition: all $slow;
+    -moz-transition: all $slow;
+    &:hover
+      cursor: pointer
+      background-color: $gold
+      transform: scale(1.05);
+      -webkit-transform: scale(1.05);
+      -moz-transform: scale(1.05);

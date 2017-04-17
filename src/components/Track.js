@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 
 class Track extends Component {
-  handlePlay() {
+  handleClick() {
     this.props.play(this.props.id)
   }
 
   render() {
     return (
-      <div className="Track">
+      <div className="Track" onClick={this.handleClick.bind(this)}>
         <div>
           {this.props.id}
         </div>
         <div>
           {this.props.title}
         </div>
-        <button onClick={this.handlePlay.bind(this)}>Play</button>
       </div>
     );
   }
