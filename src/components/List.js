@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Track from './Track'
-import AudioPlayer from '../utils/AudioPlayer';
+import AudioPlayer from '../utils/AudioPlayer'
+
+import FontAwesome from 'react-fontawesome'
 
 const PlayerStatus = {
   LOADING: 'LOADING',
@@ -82,8 +84,7 @@ class List extends Component {
           <p>{this.state.track.title} (Loading)</p>
         )
         button = (
-          <button onClick={this.pause.bind(this)}>
-          </button>
+          <i className='fa fa-pause-circle fa-3' aria-hidden='true' onClick={this.pause.bind(this)}></i>
         )
         break
       case PlayerStatus.PLAYING:
@@ -91,7 +92,7 @@ class List extends Component {
           <p>{this.state.track.title} (Playing)</p>
         )
         button = (
-          <button onClick={this.pause.bind(this)}></button>
+          <i className='fa fa-pause-circle fa-3' aria-hidden='true' onClick={this.pause.bind(this)}></i>
         )
         break
       case PlayerStatus.PAUSED:
@@ -99,12 +100,12 @@ class List extends Component {
           <p>{this.state.track.title} (Paused)</p>
         )
         button = (
-          <button onClick={this.resume.bind(this)}></button>
+          <i className='fa fa-play-circle fa-3' aria-hidden='true' onClick={this.resume.bind(this)}></i>
         )
         break
       default:
         button = (
-          <button onClick={this.default.bind(this)}></button>
+          <i className='fa fa-play-circle fa-3' aria-hidden='true' onClick={this.default.bind(this)}></i>
         )
         break
     }
