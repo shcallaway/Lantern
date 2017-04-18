@@ -27,8 +27,8 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 // Setup sass middleware
 app.use(sass({
   // debug: true,
-  src:  path.resolve(__dirname, '../public/sass'),
-  dest: path.resolve(__dirname, '../public'),
+  src:  path.resolve(__dirname, '../client/public/sass'),
+  dest: path.resolve(__dirname, '../client/public'),
   indentedSyntax: true,
   outputStyle: 'compressed'
 }));
