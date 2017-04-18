@@ -34,7 +34,7 @@ app.use(sass({
 }));
 
 // Serve static assets
-app.use(express.static(path.resolve(__dirname, '..', 'build')))
+app.use(express.static(path.resolve(__dirname, '../client/build')))
 
 // Declare server-side routes
 app.get('/tracks', (req, res) => {
