@@ -2,13 +2,11 @@
   "name": "lantern-client",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {
-    "react-scripts": "0.9.5"
-  },
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-router": "^3.0.0"
+    "react-router": "^3.0.0",
+    "react-scripts": "0.9.5"
   },
   "scripts": {
     "start": "react-scripts start",
