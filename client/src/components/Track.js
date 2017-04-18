@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 
 class Track extends Component {
-  handleClick() {
-    this.props.play(this.props.id)
+  constructor() {
+    super()
+    this.beginPlayback = this.beginPlayback.bind(this)
+  }
+
+  // wraps parent method
+  beginPlayback() {
+    this.props.beginPlayback(this.props.id)
   }
 
   render() {
     return (
-      <div className='Track' onClick={this.handleClick.bind(this)}>
+      <div className='Track' onClick={this.beginPlayback}>
         <div>
           {this.props.title}
         </div>

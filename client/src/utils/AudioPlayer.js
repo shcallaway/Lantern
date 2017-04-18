@@ -1,16 +1,17 @@
-const context = new AudioContext()
+const context = new (window.AudioContext || window.webkitAudioContext)()
 let source = null
 let offset = 0
 let start = 0
 
 const AudioPlayer = {
-  play: function(data) {
+  play: function(data, component) {
 
     // Store the current time
     start = context.currentTime
 
     // Decode the audio data
-    context.decodeAudioData(data, buffer => {
+    context.decodeAudioData(data)
+    .then(buffer => {
 
       // Create a new buffer source
       source = context.createBufferSource()
@@ -19,7 +20,11 @@ const AudioPlayer = {
 
       // Start playing immediately
       source.start(context.currentTime)
-    })    
+
+      source.onended = () => {
+        component.handleCompletion()
+      }
+    })
   },
   stop: function() {
 

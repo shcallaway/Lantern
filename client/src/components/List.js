@@ -17,22 +17,26 @@ class List extends Component {
       track: null,
       status: null
     }
+    this.beginPlayback = this.beginPlayback.bind(this)
+    this.pausePlayback = this.pausePlayback.bind(this)
+    this.resumePlayback = this.resumePlayback.bind(this)
+    this.defaultPlayback = this.defaultPlayback.bind(this)
   }
 
-  default() {
-    this.play(this.props.tracks[0].id)
+  defaultPlayback() {
+    const id = this.props.tracks[0].id
+    this.beginPlayback(id)
   }
 
-  play(id) {
+  beginPlayback(id) {
+
     AudioPlayer.stop()
-
-    // Keep track of the most recently queued track id
     inQueue = id
 
     // Get the full track object
-    let track
-    for (var i = 0; i < this.props.tracks.length; i++) {
-      let current = this.props.tracks[i]
+    let track, current
+    for (let i = 0; i < this.props.tracks.length; i++) {
+      current = this.props.tracks[i]
       if (current.id === id) {
         track = current
         break
@@ -44,7 +48,7 @@ class List extends Component {
       track: track
     })
 
-    const URL = `https://calm-tundra-94870.herokuapp.com/tracks/${id}/stream`
+    const URL = `/tracks/${id}/stream`
     const options = { method: 'GET' }
 
     fetch(URL, options)
@@ -52,7 +56,7 @@ class List extends Component {
     .then(data => {
 
       // Protect against callbacks from out-of-date requests
-      if (inQueue != id) {
+      if (inQueue !== id) {
         return
       }
 
@@ -60,11 +64,36 @@ class List extends Component {
         status: PlayerStatus.PLAYING
       })
 
-      AudioPlayer.play(data)
+      AudioPlayer.play(data, this)
     })
   }
 
-  pause() {
+  handleCompletion() {
+
+    // If the track is simply paused...
+    if (this.state.status === PlayerStatus.PAUSED) return
+
+    let tracks = this.props.tracks
+    let current = this.state.track
+
+    // If current track is last...
+    if (current.id === tracks[tracks.length - 1].id) {
+
+      // Re-initialize state
+      this.setState({
+        track: null,
+        status: null
+      })
+      
+      return
+    }
+
+    // Otherwise, play the next track
+    let index = tracks.indexOf(current) + 1
+    this.beginPlayback(tracks[index].id)
+  }
+
+  pausePlayback() {
     AudioPlayer.pause()
 
     this.setState({ 
@@ -72,7 +101,7 @@ class List extends Component {
     })
   }
 
-  resume() {
+  resumePlayback() {
     AudioPlayer.resume()
 
     this.setState({
@@ -81,7 +110,6 @@ class List extends Component {
   }
 
   render() {
-
     let info
     if (this.state.status) {
       info = (
@@ -112,7 +140,7 @@ class List extends Component {
         button = (
           <div>
             <i className='fa fa-pause-circle fa-3' 
-            aria-hidden='true' onClick={this.pause.bind(this)}></i>
+            aria-hidden='true' onClick={this.pausePlayback}></i>
           </div>
         )
         thumbnail = (
@@ -123,7 +151,7 @@ class List extends Component {
         button = (
           <div>
             <i className='fa fa-play-circle fa-3' 
-            aria-hidden='true' onClick={this.resume.bind(this)}></i>
+            aria-hidden='true' onClick={this.resumePlayback}></i>
           </div>
         )
         thumbnail = (
@@ -134,7 +162,7 @@ class List extends Component {
         button = (
           <div>
             <i className='fa fa-play-circle fa-3' 
-            aria-hidden='true' onClick={this.default.bind(this)}></i>
+            aria-hidden='true' onClick={this.defaultPlayback}></i>
           </div>
         )
         break
@@ -144,7 +172,7 @@ class List extends Component {
       <div className='List'>
         <div className='Tracks'>
           {this.props.tracks.map((track, index) => {
-            return <Track {...track} key={index} play={this.play.bind(this)} />
+            return <Track {...track} key={index} beginPlayback={this.beginPlayback} />
           })}
         </div>
         <div className='Controls'>
