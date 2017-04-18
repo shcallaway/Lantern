@@ -10,7 +10,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const URL = 'http://localhost:9000/tracks'
+    const URL = 'https://calm-tundra-94870.herokuapp.com/tracks'
     const options = { method: 'GET' }
 
     fetch(URL, options)

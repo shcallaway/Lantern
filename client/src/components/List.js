@@ -44,7 +44,7 @@ class List extends Component {
       track: track
     })
 
-    const URL = `http://localhost:9000/tracks/${id}/stream`
+    const URL = `https://calm-tundra-94870.herokuapp.coms/tracks/${id}/stream`
     const options = { method: 'GET' }
 
     fetch(URL, options)
