@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import Track from './Track'
 import AudioPlayer from '../utils/AudioPlayer'
 
-import FontAwesome from 'react-fontawesome'
-
 const PlayerStatus = {
   LOADING: 'LOADING',
   PLAYING: 'PLAYING',
