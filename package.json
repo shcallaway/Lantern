@@ -19,7 +19,7 @@
   "scripts": {
     "react": "react-scripts start",
     "node": "node server",
-    "start": "npm install && react-scripts build && node server",
+    "start": "node server",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom"
   }
