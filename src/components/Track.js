@@ -7,12 +7,12 @@ class Track extends Component {
 
   render() {
     return (
-      <div className="Track" onClick={this.handleClick.bind(this)}>
-        <div>
-          {this.props.id}
-        </div>
+      <div className='Track' onClick={this.handleClick.bind(this)}>
         <div>
           {this.props.title}
+        </div>
+        <div className='Artist'>
+          {this.props.artist}
         </div>
       </div>
     );

@@ -10,6 +10,8 @@ const PlayerStatus = {
   PAUSED: 'PAUSED'
 }
 
+let inQueue = null
+
 class List extends Component {
   constructor() {
     super()
@@ -24,13 +26,12 @@ class List extends Component {
   }
 
   play(id) {
-    const URL = `http://localhost:9000/tracks/${id}/stream`
-    const options = { method: 'GET' }
-
-    // Stop stream
     AudioPlayer.stop()
 
-    // Find track by id
+    // Keep track of the most recently queued track id
+    inQueue = id
+
+    // Get the full track object
     let track
     for (var i = 0; i < this.props.tracks.length; i++) {
       let current = this.props.tracks[i]
@@ -40,16 +41,22 @@ class List extends Component {
       }
     }
 
-    // Set loading
     this.setState({ 
       status: PlayerStatus.LOADING,
       track: track
     })
 
-    // Request data
+    const URL = `http://localhost:9000/tracks/${id}/stream`
+    const options = { method: 'GET' }
+
     fetch(URL, options)
     .then(response => response.arrayBuffer())
     .then(data => {
+
+      // Protect against callbacks from out-of-date requests
+      if (inQueue != id) {
+        return
+      }
 
       this.setState({ 
         status: PlayerStatus.PLAYING
@@ -77,35 +84,60 @@ class List extends Component {
 
   render() {
 
-    let info, button
+    let info
+    if (this.state.status) {
+      info = (
+        <div className='Info'>
+          <div>
+            {this.state.track.title} ({this.state.status})
+          </div>
+          <div className='Artist'>
+            {this.state.track.artist}
+          </div>
+        </div>
+      )
+    }
+
+    let button, thumbnail
     switch (this.state.status) {
       case PlayerStatus.LOADING:
-        info = (
-          <p>{this.state.track.title} (Loading)</p>
-        )
         button = (
-          <i className='fa fa-pause-circle fa-3' aria-hidden='true' onClick={this.pause.bind(this)}></i>
+          <div>
+            <i className='fa fa-pause-circle fa-3' aria-hidden='true'></i>
+          </div>
+        )
+        thumbnail = (
+          <img src={this.state.track.img} className='Thumbnail' />
         )
         break
       case PlayerStatus.PLAYING:
-        info = (
-          <p>{this.state.track.title} (Playing)</p>
-        )
         button = (
-          <i className='fa fa-pause-circle fa-3' aria-hidden='true' onClick={this.pause.bind(this)}></i>
+          <div>
+            <i className='fa fa-pause-circle fa-3' 
+            aria-hidden='true' onClick={this.pause.bind(this)}></i>
+          </div>
+        )
+        thumbnail = (
+          <img src={this.state.track.img} className='Thumbnail' />
         )
         break
       case PlayerStatus.PAUSED:
-        info = (
-          <p>{this.state.track.title} (Paused)</p>
-        )
         button = (
-          <i className='fa fa-play-circle fa-3' aria-hidden='true' onClick={this.resume.bind(this)}></i>
+          <div>
+            <i className='fa fa-play-circle fa-3' 
+            aria-hidden='true' onClick={this.resume.bind(this)}></i>
+          </div>
+        )
+        thumbnail = (
+          <img src={this.state.track.img} className='Thumbnail' />
         )
         break
       default:
         button = (
-          <i className='fa fa-play-circle fa-3' aria-hidden='true' onClick={this.default.bind(this)}></i>
+          <div>
+            <i className='fa fa-play-circle fa-3' 
+            aria-hidden='true' onClick={this.default.bind(this)}></i>
+          </div>
         )
         break
     }
@@ -118,12 +150,9 @@ class List extends Component {
           })}
         </div>
         <div className='Controls'>
-          <div>
-            {button}
-          </div>
-          <div>
-            {info}
-          </div>
+          {button}
+          {info}
+          {thumbnail}
         </div>
       </div>
     );
