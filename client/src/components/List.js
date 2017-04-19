@@ -116,21 +116,7 @@ class List extends Component {
   }
 
   render() {
-    let info
-    if (this.state.status) {
-      info = (
-        <div className='Info'>
-          <div>
-            {this.state.track.title} ({this.state.status})
-          </div>
-          <div className='Artist'>
-            {this.state.track.artist}
-          </div>
-        </div>
-      )
-    }
-
-    let button, thumbnail
+    let button, thumbnail, loading
     switch (this.state.status) {
       case PlayerStatus.LOADING:
         button = (
@@ -172,6 +158,20 @@ class List extends Component {
           </div>
         )
         break
+    }
+
+    let info
+    if (this.state.status) {
+      info = (
+        <div className='Info'>
+          <div>
+            {this.state.track.title} ({this.state.status})
+          </div>
+          <div className='Artist'>
+            {this.state.track.artist}
+          </div>
+        </div>
+      )
     }
 
     return (
