@@ -2,6 +2,16 @@
 
 A simple music streaming app.
 
+## Demo
+
+You can view the application in production [here](https://calm-tundra-94870.herokuapp.com/). *Please be patient while the audio loads, as the Fetch standard does not support audio streaming yet.* A future enhancement may involve using websockets. 
+
+The production application relies on the following additonal technologies:
+
+* Heroku
+* AWS RDS
+* AWS S3
+
 ## Getting Started
 
 To run the app locally, 
@@ -39,13 +49,3 @@ Visit the application at localhost:9000.
 * Node/Express
 * MySQL
 * JS Web Audio API
-
-## Demo
-
-You can view the application in production [here](https://calm-tundra-94870.herokuapp.com/). Please be patient while the audio loads, as the Fetch standard does not support audio streaming yet.
-
-The production application relies on the following additonal technologies:
-
-* Heroku
-* AWS RDS
-* AWS S3
