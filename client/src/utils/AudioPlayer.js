@@ -79,7 +79,8 @@ const AudioPlayer = {
     // Create a new source with the same buffer
     source = context.createBufferSource()
     source.buffer = buffer
-    source.connect(context.destination)
+    source.connect(gainNode)
+    gainNode.connect(context.destination)
 
     // Start playing from the offset
     source.start(context.currentTime, offset % source.buffer.duration)
