@@ -26,9 +26,9 @@ $fast: 0.1s
   &:hover
     cursor: pointer
     background-color: $gold
-
-  &:active
-    background-color: $yellow
+    transform: scale(1.05)
+    -webkit-transform: scale(1.05)
+    -moz-transform: scale(1.05)
 
 .Artist
   font-style: italic
@@ -94,4 +94,32 @@ body
 
   .Slider
     margin-left: auto
-    margin-right: 10px
+    margin-right: 20px
+
+    input[type=range]
+      -webkit-appearance: none
+      width: 120px
+      height: 3px
+      background: $brown
+
+    input[type=range]::-webkit-slider-thumb
+      -webkit-appearance: none
+      background: $brown
+      height: 20px
+      width: 10px
+      cursor: pointer;
+      transition: all $slow
+
+      &:hover
+        background: $gold
+        transform: scale(1.2)
+        -webkit-transform: scale(1.2)
+        -moz-transform: scale(1.2)
+        outline: none
+
+    input[type=range]:focus
+      outline: none
+
+    input[type=range]::-ms-track
+      width: 100%;
+      cursor: pointer;
