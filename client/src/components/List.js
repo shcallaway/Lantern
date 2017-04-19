@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Track from './Track'
+import Slider from './Slider'
 import AudioPlayer from '../utils/AudioPlayer'
 
 const PlayerStatus = {
@@ -21,6 +22,11 @@ class List extends Component {
     this.pausePlayback = this.pausePlayback.bind(this)
     this.resumePlayback = this.resumePlayback.bind(this)
     this.defaultPlayback = this.defaultPlayback.bind(this)
+    this.adjustVolume = this.adjustVolume.bind(this)
+  }
+
+  adjustVolume(volume) {
+    AudioPlayer.adjustVolume(volume / 100)
   }
 
   defaultPlayback() {
@@ -172,13 +178,15 @@ class List extends Component {
       <div className='List'>
         <div className='Tracks'>
           {this.props.tracks.map((track, index) => {
-            return <Track {...track} key={index} beginPlayback={this.beginPlayback} />
+            return (
+              <Track {...track} key={index} beginPlayback={this.beginPlayback} />
+              )
           })}
         </div>
         <div className='Controls'>
           {button}
           {info}
-          {thumbnail}
+          <Slider adjustVolume={this.adjustVolume} />
         </div>
       </div>
     );

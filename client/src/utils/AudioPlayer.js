@@ -2,8 +2,16 @@ const context = new (window.AudioContext || window.webkitAudioContext)()
 let source = null
 let offset = 0
 let start = 0
+let gainNode = context.createGain()
 
 const AudioPlayer = {
+  adjustVolume: function(value) {
+
+    // translate value in range 0 - 100
+    // to value in range minValue - maxValue
+
+    gainNode.gain.value = value
+  },
   play: function(data, component) {
 
     // Store the current time
@@ -13,12 +21,13 @@ const AudioPlayer = {
     context.decodeAudioData(data)
     .then(buffer => {
 
-      // Create a new buffer source
+      // Prepare buffer source
       source = context.createBufferSource()
       source.buffer = buffer
-      source.connect(context.destination)
+      source.connect(gainNode)
+      gainNode.connect(context.destination)
 
-      // Start playing immediately
+      // Play buffer source
       source.start(context.currentTime)
 
       source.onended = () => {
