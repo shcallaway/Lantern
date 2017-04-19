@@ -6,6 +6,13 @@ A simple music streaming app.
 
 You can view the application in production [here](https://calm-tundra-94870.herokuapp.com/). *Please be patient while the audio loads, as the Fetch standard does not support audio streaming yet.* A future enhancement may involve using websockets. 
 
+## Technologies
+
+* React/React-Router
+* Node/Express
+* MySQL
+* JS Web Audio API
+
 The production application relies on the following additonal technologies:
 
 * Heroku
@@ -14,7 +21,7 @@ The production application relies on the following additonal technologies:
 
 ## Getting Started
 
-To run the app locally, 
+To run the app locally:
 
 ```
 git clone https://github.com/shcallaway/Lantern.git
@@ -42,10 +49,3 @@ npm start
 > Note: There are two `package.json` files in this repository, one for the client and one for the server. The `package.json` in the root directory is for the server, but the `npm start` script is configured to build the React client before starting the Node server. 
 
 Visit the application at localhost:9000.
-
-## Technologies
-
-* React/React-Router
-* Node/Express
-* MySQL
-* JS Web Audio API
