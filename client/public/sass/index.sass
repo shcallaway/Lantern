@@ -23,13 +23,6 @@ $fast: 0.1s
   -webkit-transition: all $fast
   -moz-transition: all $fast
 
-  &:hover
-    cursor: pointer
-    background-color: $gold
-    transform: scale(1.05)
-    -webkit-transform: scale(1.05)
-    -moz-transform: scale(1.05)
-
 .Artist
   font-style: italic
 
@@ -39,6 +32,7 @@ $fast: 0.1s
   display: flex
   flex-wrap: wrap
 
+// varying track widths for varying devices
 @media screen and (max-width: $tablet)
   .Track
     width: calc(50% - 20px) // account for padding
@@ -80,12 +74,6 @@ body
     outline: none
     transition: all $slow
     color: $brown
-    &:hover
-      color: $gold
-      cursor: pointer
-      transform: scale(1.2)
-      -webkit-transform: scale(1.2)
-      -moz-transform: scale(1.2)
 
   img
     margin-left: auto
@@ -116,16 +104,35 @@ body
       cursor: pointer;
       transition: all $slow
 
-      &:hover
-        background: $gold
-        transform: scale(1.2)
-        -webkit-transform: scale(1.2)
-        -moz-transform: scale(1.2)
-        outline: none
-
     input[type=range]:focus
       outline: none
 
     input[type=range]::-ms-track
       width: 100%;
       cursor: pointer;
+
+// hover effects for devices that support them
+@media (hover: hover)
+  .Track
+    &:hover
+      cursor: pointer
+      background-color: $gold
+      transform: scale(1.05)
+      -webkit-transform: scale(1.05)
+      -moz-transform: scale(1.05)
+  .Controls
+    i
+      &:hover
+        color: $gold
+        cursor: pointer
+        transform: scale(1.2)
+        -webkit-transform: scale(1.2)
+        -moz-transform: scale(1.2)
+  .Slider
+    input[type=range]::-webkit-slider-thumb
+      &:hover
+        background: $gold
+        transform: scale(1.2)
+        -webkit-transform: scale(1.2)
+        -moz-transform: scale(1.2)
+        outline: none
