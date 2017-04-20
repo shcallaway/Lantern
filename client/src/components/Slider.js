@@ -1,30 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class Slider extends Component {
   constructor() {
     super()
     this.state = {
-      volume: 90    
+      value: 90    
     }
-    this.adjustVolume = this.adjustVolume.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
   // wraps parent method
-  adjustVolume(event) {
+  handleChange(event) {
 
     // set state is not synchronous, so we need to use callbacks
-    this.setState({ volume: event.target.value }, () => {
-      this.props.adjustVolume(this.state.volume)
+    this.setState({ 
+      value: event.target.value 
+    }, () => {
+      this.props.adjustGain(this.state.value)
     })
   }
 
   render() {
     return (
       <div className='Slider'>
-        <input type='range' value={this.state.volume} onChange={this.adjustVolume} min='0' max='100' step='1' />
+        <input type='range' value={this.state.value} 
+        onChange={this.handleChange} min='0' max='100' step='1' />
       </div>
-    );
+    )
   }
 }
 
-export default Slider;
+export default Slider

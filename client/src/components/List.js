@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Track from './Track'
 import Slider from './Slider'
-import AudioPlayer from '../utils/AudioPlayer'
+import WebAudio from '../utils/WebAudio'
 
 const PlayerStatus = {
   LOADING: 'LOADING',
@@ -9,6 +9,12 @@ const PlayerStatus = {
   PAUSED: 'PAUSED'
 }
 
+// inQueue should be made into
+// a real queue, to handle scenario
+// when user double-clicks the
+// same track (currently, both
+// callbacks come back and make
+// it past the inQueue check)
 let inQueue = null
 
 class List extends Component {
@@ -18,178 +24,214 @@ class List extends Component {
       track: null,
       status: null
     }
+
+    this.clickRouter = this.clickRouter.bind(this)
     this.beginPlayback = this.beginPlayback.bind(this)
     this.pausePlayback = this.pausePlayback.bind(this)
     this.resumePlayback = this.resumePlayback.bind(this)
-    this.defaultPlayback = this.defaultPlayback.bind(this)
-    this.adjustVolume = this.adjustVolume.bind(this)
+    this.playFirstTrack = this.playFirstTrack.bind(this)
+    this.adjustGain = this.adjustGain.bind(this)
+    this.handleCompletion = this.handleCompletion.bind(this)
   }
 
-  adjustVolume(volume) {
-    AudioPlayer.adjustVolume(volume / 100)
+  clickRouter(id) {
+    const noTrack = this.state.track === null
+    if (noTrack) {
+      this.beginPlayback(id)
+      return
+    }
+
+    const trackMatches = this.state.track.id === id
+    const statusPlaying = this.state.status === PlayerStatus.PLAYING
+    const statusPaused = this.state.status === PlayerStatus.PAUSED
+
+    if (trackMatches && statusPlaying) {
+      this.pausePlayback()
+    } else if (trackMatches && statusPaused) {
+      this.resumePlayback()
+    } else {
+      this.beginPlayback(id)
+    }
   }
 
-  defaultPlayback() {
+  adjustGain(value) {
+    WebAudio.adjustGain(value / 100)
+  }
+
+  playFirstTrack() {
     const id = this.props.tracks[0].id
     this.beginPlayback(id)
   }
 
-  beginPlayback(id) {
-
-    AudioPlayer.stop()
-    inQueue = id
-
-    // Get the full track object
-    let track, current
+  getTrackFromId(id) {
     for (let i = 0; i < this.props.tracks.length; i++) {
-      current = this.props.tracks[i]
-      if (current.id === id) {
-        track = current
-        break
-      }
+      let current = this.props.tracks[i]
+      if (current.id === id) return current
     }
+  }
 
+  beginPlayback(id) {
     this.setState({ 
       status: PlayerStatus.LOADING,
-      track: track
+      track: this.getTrackFromId(id)
+    }, () => {
+      WebAudio.stop()
+
+      // needs refactoring
+      inQueue = id
     })
 
     const URL = `/tracks/${id}/stream`
-    const options = { method: 'GET' }
-
-    fetch(URL, options)
+    fetch(URL, { method: 'GET' })
     .then(response => response.arrayBuffer())
     .then(data => {
 
-      // Protect against callbacks from out-of-date requests
+      // protect against callbacks from out-of-date requests
       if (inQueue !== id) {
         return
       }
 
       this.setState({ 
         status: PlayerStatus.PLAYING
+      }, () => {
+        WebAudio.play(data, this.handleCompletion)
       })
-
-      AudioPlayer.play(data, this)
     })
   }
 
+  getFinalTrack() {
+    return this.props.tracks[this.props.tracks.length - 1]
+  }
+
+  onFinalTrack() {
+    const current = this.state.track
+    const final = this.getFinalTrack()
+    return current.id === final.id ? true : false
+  }
+
+  playNextTrack() {
+    const index = this.props.tracks.indexOf(this.state.track)
+    const next = this.props.tracks[index + 1]
+    this.beginPlayback(next.id)      
+  }
+
   handleCompletion() {
+    console.log('handling completion')
 
-    // If the track is simply paused...
-    if (this.state.status === PlayerStatus.PAUSED) return
+    // completion gets called under three scenarios:
+    // 1. the source finishes playing the buffer (play next)
+    // 2. the track is paused, and source.stop is called (do nothing)
+    // 3. a new track is loading, and source.stop is called (do nothing)
 
-    let tracks = this.props.tracks
-    let current = this.state.track
+    const statusLoading = this.state.status === PlayerStatus.LOADING
+    const statusPaused = this.state.status === PlayerStatus.PAUSED
+    if (statusLoading || statusPaused) return
 
-    // If current track is last...
-    if (current.id === tracks[tracks.length - 1].id) {
+    console.log('actual completion scenario')
 
-      // Re-initialize state
+    if (this.onFinalTrack()) {
       this.setState({
         track: null,
         status: null
       })
-      
-      return
+    } else {
+      this.playNextTrack()
     }
-
-    // Otherwise, play the next track
-    let index = tracks.indexOf(current) + 1
-    this.beginPlayback(tracks[index].id)
   }
 
   pausePlayback() {
-    AudioPlayer.pause()
-
     this.setState({ 
       status: PlayerStatus.PAUSED
+    }, () => {
+      WebAudio.pause()
     })
   }
 
   resumePlayback() {
-    AudioPlayer.resume()
-
     this.setState({
       status: PlayerStatus.PLAYING
+    }, () => {
+      WebAudio.resume(this.handleCompletion)      
     })
   }
 
-  render() {
-    let button, thumbnail, loading
+  loadingButton() {
+    return (
+      <div>
+        <i className='fa fa-pause-circle fa-3' aria-hidden='true'></i>
+      </div>
+    )
+  }
+
+  pauseButton() {
+    return (
+      <div>
+        <i className='fa fa-pause-circle fa-3' 
+        aria-hidden='true' onClick={this.pausePlayback}></i>
+      </div>
+    )
+  }
+
+  resumeButton() {
+    return (
+      <div>
+        <i className='fa fa-play-circle fa-3' 
+        aria-hidden='true' onClick={this.resumePlayback}></i>
+      </div>
+    )
+  }
+
+  defaultButton() {
+    return (
+      <div>
+        <i className='fa fa-play-circle fa-3' 
+        aria-hidden='true' onClick={this.playFirstTrack}></i>
+      </div>
+    )
+  }
+
+  assignButton() {
     switch (this.state.status) {
       case PlayerStatus.LOADING:
-        button = (
-          <div>
-            <i className='fa fa-pause-circle fa-3' aria-hidden='true'></i>
-          </div>
-        )
-        thumbnail = (
-          <img src={this.state.track.img} className='Thumbnail' />
-        )
-        break
+        return this.loadingButton()
       case PlayerStatus.PLAYING:
-        button = (
-          <div>
-            <i className='fa fa-pause-circle fa-3' 
-            aria-hidden='true' onClick={this.pausePlayback}></i>
-          </div>
-        )
-        thumbnail = (
-          <img src={this.state.track.img} className='Thumbnail' />
-        )
-        break
+        return this.pauseButton()
       case PlayerStatus.PAUSED:
-        button = (
-          <div>
-            <i className='fa fa-play-circle fa-3' 
-            aria-hidden='true' onClick={this.resumePlayback}></i>
-          </div>
-        )
-        thumbnail = (
-          <img src={this.state.track.img} className='Thumbnail' />
-        )
-        break
+        return this.resumeButton()
       default:
-        button = (
-          <div>
-            <i className='fa fa-play-circle fa-3' 
-            aria-hidden='true' onClick={this.defaultPlayback}></i>
-          </div>
-        )
-        break
+        return this.defaultButton()
     }
+  }
 
-    let info
-    if (this.state.status) {
-      info = (
-        <div className='Info'>
-          <div>
-            {this.state.track.title} ({this.state.status})
-          </div>
-          <div className='Artist'>
-            {this.state.track.artist}
-          </div>
-        </div>
-      )
-    }
+  assignInfo() {
+    if (!this.state.status) return
+
+    return (
+      <div className='Info'>
+        <div>{this.state.track.title} ({this.state.status})</div>
+        <div className='Artist'>{this.state.track.artist}</div>
+      </div>
+    )
+  }
+
+  render() {
+    let button = this.assignButton()
+    let info = this.assignInfo()
 
     return (
       <div className='List'>
         <div className='Tracks'>
-          {this.props.tracks.map((track, index) => {
-            return (
-              <Track {...track} key={index} beginPlayback={this.beginPlayback} />
-              )
-          })}
+          {this.props.tracks.map((track, index) => 
+            <Track {...track} key={index} clickRouter={this.clickRouter} />
+          )}
         </div>
         <div className='Controls'>
           {button}
           {info}
-          <Slider adjustVolume={this.adjustVolume} />
+          <Slider adjustGain={this.adjustGain} />
         </div>
       </div>
-    );
+    )
   }
 }
 

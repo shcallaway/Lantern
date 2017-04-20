@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class Track extends Component {
   constructor() {
     super()
-    this.beginPlayback = this.beginPlayback.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   // wraps parent method
-  beginPlayback() {
-    this.props.beginPlayback(this.props.id)
+  handleClick() {
+    console.log('inside track: ' + this.props.id)
+    this.props.clickRouter(this.props.id)
   }
 
   render() {
     return (
-      <div className='Track' onClick={this.beginPlayback}>
+      <div className='Track' onClick={this.handleClick}>
         <div>
           {this.props.title}
         </div>
@@ -21,8 +22,8 @@ class Track extends Component {
           {this.props.artist}
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Track;
+export default Track
