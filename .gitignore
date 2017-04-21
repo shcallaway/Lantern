@@ -7,7 +7,9 @@
 /client/node_modules
 
 # selenium and nightwatch
-/bin
+/nightwatch/selenium-server-standalone*
+/nightwatch/drivers/*
+/nightwatch/reports/*
 selenium-debug.log*
 
 # production

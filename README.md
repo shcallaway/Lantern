@@ -49,3 +49,15 @@ npm start
 > Note: There are two `package.json` files in this repository, one for the client and one for the server. The `package.json` in the root directory is for the server, but the `npm start` script is configured to build the React client before starting the Node server. 
 
 Visit the application at localhost:9000.
+
+## Running Tests
+
+Lantern uses [Nightwatch](http://nightwatchjs.org/) for automated end-to-end testing. 
+
+To execute the test suite, you must first download the Selenium .jar file and the various webdrivers. Place the .jar in `/nightwatch` the drivers in the `/nightwatch/drivers`, respectively. 
+
+Once you have downloaded these depenencies, you may run the tests from the application root directory with the `nightwatch` command (assuming you installed the CLI using the global tag). You must specify an environment other than default using the `--env` tag like so:
+
+```
+nightwatch -e chrome
+```
