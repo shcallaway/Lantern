@@ -6,8 +6,9 @@
 # client dependencies
 /client/node_modules
 
-# testing
-/coverage
+# selenium and nightwatch
+/bin
+selenium-debug.log*
 
 # production
 /client/build

@@ -2,6 +2,7 @@ const AudioContext = window.AudioContext || window.webkitAudioContext
 
 class WebAudio {
   constructor() {
+
     this.ctx = new AudioContext()
     this.gain = this.ctx.createGain()
     this.src = null
@@ -93,4 +94,4 @@ class WebAudio {
   }
 }
 
-export default new WebAudio
+export default new WebAudio()
