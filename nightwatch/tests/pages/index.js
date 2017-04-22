@@ -6,6 +6,12 @@ module.exports = {
     },
     list: {
       selector: 'div.List'
+    },
+    app: {
+      selector: 'div.App'
+    },
+    tracks: {
+      selector: 'div.Track'
     }
   }
 }

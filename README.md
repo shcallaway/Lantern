@@ -54,9 +54,9 @@ Visit the application at localhost:9000.
 
 Lantern uses [Nightwatch](http://nightwatchjs.org/) for automated end-to-end testing. 
 
-To execute the test suite, you must first download the Selenium .jar file and the various webdrivers. Place the .jar in `/nightwatch` the drivers in the `/nightwatch/drivers`, respectively. 
+To execute the test suite you must first download the Selenium .jar file and the various webdrivers (e.g. geckodriver, chromedriver). Place the .jar in `/nightwatch` the drivers in the `/nightwatch/drivers` respectively. 
 
-Once you have downloaded these depenencies, you may run the tests from the application root directory with the `nightwatch` command (assuming you installed the CLI using the global tag). You must specify an environment other than default using the `--env` tag like so:
+You may run the tests from the application root directory with the `nightwatch` command, assuming you installed the CLI using the global tag. You must specify an environment other than default like so:
 
 ```
 nightwatch -e chrome
