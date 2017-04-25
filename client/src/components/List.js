@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import Track from './Track'
 import Slider from './Slider'
-import WebAudio from '../utils/WebAudio'
+// import WebAudio from '../utils/WebAudio'
+import AudioPlayer from '../utils/AudioPlayer'
 
 const PlayerStatus = {
   LOADING: 'LOADING',
@@ -55,7 +56,7 @@ class List extends Component {
   }
 
   adjustGain(value) {
-    WebAudio.adjustGain(value / 100)
+    // WebAudio.adjustGain(value / 100)
   }
 
   playFirstTrack() {
@@ -75,7 +76,7 @@ class List extends Component {
       status: PlayerStatus.LOADING,
       track: this.getTrackFromId(id)
     }, () => {
-      WebAudio.stop()
+      // WebAudio.stop()
 
       // needs refactoring
       inQueue = id
@@ -83,7 +84,7 @@ class List extends Component {
 
     const URL = `/tracks/${id}/stream`
     fetch(URL, { method: 'GET' })
-    .then(response => response.arrayBuffer())
+    .then(response => response.json())
     .then(data => {
 
       // protect against callbacks from out-of-date requests
@@ -94,7 +95,9 @@ class List extends Component {
       this.setState({ 
         status: PlayerStatus.PLAYING
       }, () => {
-        WebAudio.play(data, this.handleCompletion)
+        console.log(data)
+        AudioPlayer.play(data.url)
+        // WebAudio.play(data, this.handleCompletion)
       })
     })
   }
@@ -143,7 +146,7 @@ class List extends Component {
     this.setState({ 
       status: PlayerStatus.PAUSED
     }, () => {
-      WebAudio.pause()
+      // WebAudio.pause()
     })
   }
 
@@ -151,7 +154,7 @@ class List extends Component {
     this.setState({
       status: PlayerStatus.PLAYING
     }, () => {
-      WebAudio.resume(this.handleCompletion)      
+      // WebAudio.resume(this.handleCompletion)      
     })
   }
 

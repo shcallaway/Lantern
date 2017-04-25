@@ -24,10 +24,6 @@ class WebAudio {
     })    
   }
 
-  setCompletionCallback(callback) {
-    this.src.onended = callback
-  }
-
   stop() {
     this.stopSource()
     this.clearSourceVars()
@@ -48,6 +44,10 @@ class WebAudio {
   }
 
   // PRIVATE METHODS
+
+  setCompletionCallback(callback) {
+    this.src.onended = callback
+  }
 
   decodeData(data) {
     return this.ctx.decodeAudioData(data)
