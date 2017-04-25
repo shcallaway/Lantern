@@ -93,4 +93,4 @@ class WebAudio {
   }
 }
 
-export default new WebAudio
+export default new WebAudio()
