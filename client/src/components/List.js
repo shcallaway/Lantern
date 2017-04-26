@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import Track from './Track'
 import Slider from './Slider'
-import WebAudio from '../utils/WebAudio'
+// import WebAudio from '../utils/WebAudio'
+import AudioPlayer from '../utils/AudioPlayer'
 
 const PlayerStatus = {
   LOADING: 'LOADING',
@@ -25,19 +26,20 @@ class List extends Component {
       status: null
     }
 
+    this.play = this.play.bind(this)
+    this.pause = this.pause.bind(this)
+    this.resume = this.resume.bind(this)
+    this.onLoad = this.onLoad.bind(this)
+    this.setVolume = this.setVolume.bind(this)
     this.clickRouter = this.clickRouter.bind(this)
-    this.beginPlayback = this.beginPlayback.bind(this)
-    this.pausePlayback = this.pausePlayback.bind(this)
-    this.resumePlayback = this.resumePlayback.bind(this)
+    this.onCompletion = this.onCompletion.bind(this)
     this.playFirstTrack = this.playFirstTrack.bind(this)
-    this.adjustGain = this.adjustGain.bind(this)
-    this.handleCompletion = this.handleCompletion.bind(this)
   }
 
   clickRouter(id) {
     const noTrack = this.state.track === null
     if (noTrack) {
-      this.beginPlayback(id)
+      this.play(id)
       return
     }
 
@@ -46,21 +48,21 @@ class List extends Component {
     const statusPaused = this.state.status === PlayerStatus.PAUSED
 
     if (trackMatches && statusPlaying) {
-      this.pausePlayback()
+      this.pause()
     } else if (trackMatches && statusPaused) {
-      this.resumePlayback()
+      this.resume()
     } else {
-      this.beginPlayback(id)
+      this.play(id)
     }
   }
 
-  adjustGain(value) {
-    WebAudio.adjustGain(value / 100)
+  setVolume(value) {
+    AudioPlayer.setVolume(value / 100)
   }
 
   playFirstTrack() {
     const id = this.props.tracks[0].id
-    this.beginPlayback(id)
+    this.play(id)
   }
 
   getTrackFromId(id) {
@@ -70,12 +72,12 @@ class List extends Component {
     }
   }
 
-  beginPlayback(id) {
+  play(id) {
     this.setState({ 
       status: PlayerStatus.LOADING,
       track: this.getTrackFromId(id)
     }, () => {
-      WebAudio.stop()
+      AudioPlayer.stop()
 
       // needs refactoring
       inQueue = id
@@ -83,19 +85,18 @@ class List extends Component {
 
     const URL = `/tracks/${id}/stream`
     fetch(URL, { method: 'GET' })
-    .then(response => response.arrayBuffer())
-    .then(data => {
+    .then(response => response.json())
+    .then(track => {
 
       // protect against callbacks from out-of-date requests
       if (inQueue !== id) {
         return
       }
 
-      this.setState({ 
-        status: PlayerStatus.PLAYING
-      }, () => {
-        WebAudio.play(data, this.handleCompletion)
-      })
+      console.log('got track!')
+      console.log(track)
+
+      AudioPlayer.play(track.url, this.onLoad, this.onCompletion)
     })
   }
 
@@ -112,22 +113,22 @@ class List extends Component {
   playNextTrack() {
     const index = this.props.tracks.indexOf(this.state.track)
     const next = this.props.tracks[index + 1]
-    this.beginPlayback(next.id)      
+    this.play(next.id)      
   }
 
-  handleCompletion() {
+  onLoad() {
+    console.log(this)
+    this.setState({ status: PlayerStatus.PLAYING })
+  }
+
+  onCompletion() {
     console.log('handling completion')
 
-    // completion gets called under three scenarios:
-    // 1. the source finishes playing the buffer (play next)
-    // 2. the track is paused, and source.stop is called (do nothing)
-    // 3. a new track is loading, and source.stop is called (do nothing)
+    // onCompletion is called in two scenarios:
+    // 1. The track finishes playing (play next track)
+    // 3. A new track is loading (do nothing)
 
-    const statusLoading = this.state.status === PlayerStatus.LOADING
-    const statusPaused = this.state.status === PlayerStatus.PAUSED
-    if (statusLoading || statusPaused) return
-
-    console.log('actual completion scenario')
+    if (this.state.status === PlayerStatus.LOADING) return
 
     if (this.onFinalTrack()) {
       this.setState({
@@ -139,19 +140,19 @@ class List extends Component {
     }
   }
 
-  pausePlayback() {
+  pause() {
     this.setState({ 
       status: PlayerStatus.PAUSED
     }, () => {
-      WebAudio.pause()
+      AudioPlayer.pause()
     })
   }
 
-  resumePlayback() {
+  resume() {
     this.setState({
       status: PlayerStatus.PLAYING
     }, () => {
-      WebAudio.resume(this.handleCompletion)      
+      AudioPlayer.resume()
     })
   }
 
@@ -167,7 +168,7 @@ class List extends Component {
     return (
       <div>
         <i className='fa fa-pause-circle fa-3' 
-        aria-hidden='true' onClick={this.pausePlayback}></i>
+        aria-hidden='true' onClick={this.pause}></i>
       </div>
     )
   }
@@ -176,7 +177,7 @@ class List extends Component {
     return (
       <div>
         <i className='fa fa-play-circle fa-3' 
-        aria-hidden='true' onClick={this.resumePlayback}></i>
+        aria-hidden='true' onClick={this.resume}></i>
       </div>
     )
   }
@@ -228,7 +229,7 @@ class List extends Component {
         <div className='Controls'>
           {button}
           {info}
-          <Slider adjustGain={this.adjustGain} />
+          <Slider setVolume={this.setVolume} />
         </div>
       </div>
     )

@@ -2,21 +2,19 @@ const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
 const chalk = require('chalk')
-const s3 = require('s3')
+const s3 = require('aws-sdk/clients/s3')
 const dotenv = require('dotenv')
 const sass = require('node-sass-middleware')
+const database = require('./database')
 
 dotenv.config()
 
-// Set up s3 credentials
-var client = s3.createClient({  
-  s3Options: {
-    accessKeyId: process.env.S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
+// The AWS SDK automatically finds credentials from environment vars
+const client = new s3({
+  params: {
+    Bucket: process.env.AWS_BUCKET // But we have to explicitly provide this
   }
-});
-
-const database = require('./database')
+})
 
 // Initialize the server
 const app = express()
@@ -59,7 +57,7 @@ app.get('/tracks', (req, res) => {
   })
 })
 
-app.get('/tracks/:id/stream', (req, res) => {
+app.get('/tracks/:id([0-9]*)/stream', (req, res) => {
 
   process.stdout.write('Server received a request: ')
   console.log(chalk.blue(`${req.method} ${req.url}`))
@@ -77,17 +75,21 @@ app.get('/tracks/:id/stream', (req, res) => {
       res.sendStatus(500)
     }
 
-    // Upon success...
-    const params = {
-      Bucket: 'lantern-dev',
-      Key: results[0].key
-    };
-
-    // Download stream and pipe to client
-    const stream = client.downloadStream(params)
-    stream.pipe(res)
+    // Replace true URL with a pre-signed temporary one
+    const track = results[0]
+    track.url = getSignedURL(track.key)
+    res.status(200).json(track)
   })
 });
+
+function getSignedURL(key) {
+
+  // Docs: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getSignedUrl-property
+  return client.getSignedUrl('getObject', {
+    Key: key,
+    Expires: 60 // URL expires in 1 minute
+  })
+}
 
 // This was included with the node boilerplate I referenced
 // app.get('*', (req, res) => {

@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "https://localhost:9000",
   "dependencies": {
+    "howler": "^2.0.3",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-router": "^3.0.0",
