@@ -1,3 +1,5 @@
+// This module has been replaced by Howler
+
 const AudioContext = window.AudioContext || window.webkitAudioContext
 
 class WebAudio {

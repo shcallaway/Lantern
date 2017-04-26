@@ -4,7 +4,7 @@ class Slider extends Component {
   constructor() {
     super()
     this.state = {
-      value: 90    
+      value: 60    
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -16,7 +16,7 @@ class Slider extends Component {
     this.setState({ 
       value: event.target.value 
     }, () => {
-      this.props.adjustGain(this.state.value)
+      this.props.adjustVolume(this.state.value)
     })
   }
 

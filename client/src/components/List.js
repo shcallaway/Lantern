@@ -31,8 +31,9 @@ class List extends Component {
     this.pausePlayback = this.pausePlayback.bind(this)
     this.resumePlayback = this.resumePlayback.bind(this)
     this.playFirstTrack = this.playFirstTrack.bind(this)
-    this.adjustGain = this.adjustGain.bind(this)
-    this.handleCompletion = this.handleCompletion.bind(this)
+    this.adjustVolume = this.adjustVolume.bind(this)
+    this.onLoad = this.onLoad.bind(this)
+    this.onCompletion = this.onCompletion.bind(this)
   }
 
   clickRouter(id) {
@@ -55,8 +56,8 @@ class List extends Component {
     }
   }
 
-  adjustGain(value) {
-    // WebAudio.adjustGain(value / 100)
+  adjustVolume(value) {
+    AudioPlayer.setVolume(value / 100)
   }
 
   playFirstTrack() {
@@ -76,7 +77,7 @@ class List extends Component {
       status: PlayerStatus.LOADING,
       track: this.getTrackFromId(id)
     }, () => {
-      // WebAudio.stop()
+      AudioPlayer.stop()
 
       // needs refactoring
       inQueue = id
@@ -85,20 +86,18 @@ class List extends Component {
     const URL = `/tracks/${id}/stream`
     fetch(URL, { method: 'GET' })
     .then(response => response.json())
-    .then(data => {
+    .then(track => {
 
       // protect against callbacks from out-of-date requests
       if (inQueue !== id) {
         return
       }
 
-      this.setState({ 
-        status: PlayerStatus.PLAYING
-      }, () => {
-        console.log(data)
-        AudioPlayer.play(data.url)
-        // WebAudio.play(data, this.handleCompletion)
-      })
+      console.log('got track!')
+      console.log(track)
+
+      AudioPlayer.play(track.url, this.onLoad, this.onCompletion)
+      // WebAudio.play(data, this.onCompletion)
     })
   }
 
@@ -118,7 +117,12 @@ class List extends Component {
     this.beginPlayback(next.id)      
   }
 
-  handleCompletion() {
+  onLoad() {
+    console.log(this)
+    this.setState({ status: PlayerStatus.PLAYING })
+  }
+
+  onCompletion() {
     console.log('handling completion')
 
     // completion gets called under three scenarios:
@@ -146,6 +150,7 @@ class List extends Component {
     this.setState({ 
       status: PlayerStatus.PAUSED
     }, () => {
+      AudioPlayer.pause()
       // WebAudio.pause()
     })
   }
@@ -154,7 +159,8 @@ class List extends Component {
     this.setState({
       status: PlayerStatus.PLAYING
     }, () => {
-      // WebAudio.resume(this.handleCompletion)      
+      AudioPlayer.resume(this.onCompletion)
+      // WebAudio.resume(this.onCompletion)      
     })
   }
 
@@ -231,7 +237,7 @@ class List extends Component {
         <div className='Controls'>
           {button}
           {info}
-          <Slider adjustGain={this.adjustGain} />
+          <Slider adjustVolume={this.adjustVolume} />
         </div>
       </div>
     )

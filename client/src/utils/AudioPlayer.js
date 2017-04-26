@@ -1,42 +1,41 @@
 import { Howl } from './Howler'
-// import Client from './S3'
 
 class AudioPlayer {
   constructor() {
-    this.howler
+    this.vol = 0.6
+    this.track = null
   }
 
-  adjustVolume() {
+  setVolume(value) {
+    this.vol = value
 
+    if (!this.track) return
+    this.track.volume(this.vol)
   }
 
-  play(key) {
-
-    // Download stream and pipe to client
-    // const stream = Client.downloadStream(params)
-    
-    // const options = { 
-    //   src: [url],
-    //   autoplay: true,
-    //   volume: 0.5,
-    //   onend: function() {
-    //     console.log('Finished!');
-    //   }
-    // }
-
-    // this.howler = new Howl(options)
+  play(url, onLoad, onCompletion) {
+    this.track = new Howl({ 
+      src: [url],
+      autoplay: true,
+      volume: this.vol,
+      onload: onLoad,
+      onend: onCompletion
+    })
   }
 
   stop() {
-
+    if (!this.track) return
+    this.track.stop()
   }
 
   pause() {
-
+    if (!this.track) return
+    this.track.pause()
   }
 
   resume() {
-
+    if (!this.track) return
+    this.track.play()
   }
 }
 
