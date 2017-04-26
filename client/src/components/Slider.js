@@ -16,7 +16,7 @@ class Slider extends Component {
     this.setState({ 
       value: event.target.value 
     }, () => {
-      this.props.adjustVolume(this.state.value)
+      this.props.setVolume(this.state.value)
     })
   }
 
