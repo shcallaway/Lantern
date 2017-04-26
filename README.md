@@ -32,15 +32,18 @@ touch .env
 Open the dotenv file, and provide the following values:
 
 ```
-HOST=
-USERNAME=
-PASSWORD=
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
 DATABASE=
-S3_ACCESS_KEY_ID=
-S3_SECRET_ACCESS_KEY=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_BUCKET=
 ```
 
-Save the dotenv and start the application.
+Save the dotenv and start the application. 
+
+> The SDK automatically detects AWS credentials set as variables in your environment and uses them for SDK requests, eliminating the need to manage credentials in your application. - [AWS SDK for JavaScript Documentation](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-environment.html)
 
 ```
 npm start
